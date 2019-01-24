@@ -1,0 +1,66 @@
+#!/usr/bin/env newlisp
+
+(set 'lib '("gtk.nl" "ui.nl" "roman.nl" "spell-int.nl"))
+(set 'src (directory "src" "\\.nl"))
+
+(define (remove-ext f)
+  (0 -3 f))
+
+(define (remove-files src file-fmt? , acc)
+  (set 'acc '())
+  (dolist (f src)
+    (let (path (string "bin/"
+                       (if file-fmt?
+                           f
+                           (remove-ext f))))
+      (when (file-info path)
+        (push (string "rm " path) acc -1))))
+  acc)
+
+(define (concat-libs src lib)
+  (let (libs (join
+              (map (fn (f)
+                     (string "lib/" f))
+                   lib)
+              " "))
+    (map (fn (f)
+           (string "cat " libs
+                   " src/" f
+                   " > bin/" f))
+         src)))
+
+(define (build-exes src)
+  (map (fn (f)
+         (string "newlisp -x bin/" f
+                 " bin/" (remove-ext f)))
+       src))
+
+(define (chmod-exes src)
+  (map (fn (f)
+         (string "chmod +x bin/"
+                 (remove-ext f)))
+       src))
+
+(define (build)
+  ; Remove old executables
+  (dolist (cmd (remove-files src nil))
+    (! cmd))
+
+  ; Concatenate library files to a source file
+  (dolist (cmd (concat-libs src lib))
+    (! cmd))
+
+  ; Build executable from a concatenated source file
+  (dolist (cmd (build-exes src))
+    (! cmd))
+
+  ; Grant execution permissions
+  (dolist (cmd (chmod-exes src))
+    (! cmd))
+
+  ; Remove concatenated source files
+  (dolist (cmd (remove-files src true))
+    (! cmd)))
+
+(build)
+(exit)

@@ -1,0 +1,36 @@
+#!/usr/bin/env newlisp
+
+(set 'lib '("gtk.nl" "ui.nl" "roman.nl" "spell-int.nl"))
+
+(define (remove-docs lib , acc)
+  (set 'acc "rm ")
+  (let (idx "doc/index.html")
+    (when (file-info idx)
+      (push idx acc -1)))
+  (dolist (doc lib)
+    (let (path (string "doc/" doc ".html"))
+      (when (file-info path)
+        (push (string " " path) acc -1))))
+  acc)
+
+(define (build-docs lib , acc)
+  (set 'acc "newlispdoc")
+  (dolist (doc lib)
+    (push (string " ../lib/" doc) acc -1))
+  acc)
+
+(define (build)
+  ; Remove old documentation
+  (! (remove-docs lib))
+
+  ; Enter the ./doc directory
+  (change-dir "./doc")
+
+  ; Build documentation
+  (! (build-docs lib))
+  
+  ; Leave the ./doc directory
+  (change-dir ".."))
+
+(build)
+(exit)
