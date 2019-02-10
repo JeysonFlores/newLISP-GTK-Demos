@@ -1,7 +1,7 @@
 # newLISP GTK Demos
 Minimal examples of GTK applications written completely in newLISP.
 
-Inspired by a Common Lisp project, [Gtk-Demos](https://github.com/mifpasoti/Gtk-Demos).
+Inspired by a Common Lisp project, [Gtk-Demos](https://github.com/mifpasoti/Gtk-Demos/tree/15cbbb1a853019910e6928427113c9ee6b0fcfba).
 
 #### Build library documentation
 ```bash
